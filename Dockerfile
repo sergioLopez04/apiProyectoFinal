@@ -1,31 +1,31 @@
-# Usamos una imagen oficial de PHP con Apache y extensiones necesarias
-FROM php:8.1-apache
+# Usamos una imagen base oficial de PHP 8.2 con Apache
+FROM php:8.2-apache
 
-# Instalar dependencias del sistema y extensiones PHP necesarias para Laravel
+# Instalar dependencias necesarias para PHP y herramientas
 RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql zip mbstring exif pcntl bcmath gd
+    libzip-dev zip unzip curl git \
+    && docker-php-ext-install zip pdo pdo_mysql bcmath
 
-# Activar mod_rewrite de Apache (importante para Laravel)
+# Habilitar módulos de Apache necesarios (si no están ya habilitados)
 RUN a2enmod rewrite
 
-# Instalar Composer globalmente
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiar código al directorio de Apache
+# Copiar el código de la aplicación al contenedor
 COPY . /var/www/html
 
-# Establecer directorio de trabajo
-WORKDIR /var/www/html
+# Copiar el archivo de configuración de Firebase a la ruta que usa la app
+COPY storage/app/firebase/gestion-de-proyectos-271ca-firebase-adminsdk-fbsvc-08599b1cb5.json /var/www/html/storage/app/firebase/gestion-de-proyectos-271ca-firebase-adminsdk-fbsvc-08599b1cb5.json
 
-# Cambiar permisos para que Apache pueda escribir en storage y bootstrap/cache
+# Establecer permisos apropiados (puedes ajustar según necesidad)
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Instalar dependencias de PHP con composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Instalar Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Exponer puerto 80
+# Instalar dependencias de PHP con Composer
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=/var/www/html
+
+# Exponer el puerto 80
 EXPOSE 80
 
-# Comando por defecto para iniciar Apache en primer plano
+# Arrancar Apache en primer plano
 CMD ["apache2-foreground"]
