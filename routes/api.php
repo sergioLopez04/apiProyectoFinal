@@ -12,6 +12,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/prueba', function () {
+    return response()->json(['mensaje' => '¡API funcionando!']);
+});
+
+
 Route::apiResource('proyectos', ProyectoController::class);
 Route::apiResource('usuarios', UsuarioController::class);
 Route::apiResource('tareas', TareaController::class);
