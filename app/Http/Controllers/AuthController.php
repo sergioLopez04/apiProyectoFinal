@@ -16,6 +16,7 @@ class AuthController extends Controller
             $usuario = new Usuario();
             $usuario->nombre = $request->nombre;
             $usuario->email = $request->email;
+            $usuario->contraseña = $request->contraseña;
             $usuario->firebase_uid = $request->firebase_uid;
 
             if ($usuario->save()) {

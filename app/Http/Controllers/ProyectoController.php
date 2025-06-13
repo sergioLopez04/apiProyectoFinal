@@ -14,6 +14,8 @@ class ProyectoController extends Controller
         return Proyecto::with(['tareas', 'actividades'])->get();
     }
 
+    
+
     public function porUsuario($id)
     {
         return Proyecto::where('id_creador', $id)
