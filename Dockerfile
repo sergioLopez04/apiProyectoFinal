@@ -9,34 +9,26 @@ RUN apt-get update && apt-get install -y \
 # Habilitar módulos de Apache necesarios
 RUN a2enmod rewrite
 
+# Copiar el archivo de configuración personalizado de Apache
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
+
 # Copiar el código de la aplicación al contenedor
 COPY . /var/www/html
 
-# Establecer permisos adecuados
+# Copiar el archivo de configuración de Firebase (ajusta si está en .gitignore)
+COPY storage/app/firebase/gestion-de-proyectos-271ca-firebase-adminsdk-fbsvc-08599b1cb5.json /var/www/html/storage/app/firebase/
+
+# Establecer permisos apropiados
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Configurar el VirtualHost para que Apache apunte a /public
-RUN echo '<VirtualHost *:80>
-    DocumentRoot /var/www/html/public
-
-    <Directory /var/www/html/public>
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar dependencias PHP
+# Instalar dependencias de PHP con Composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --working-dir=/var/www/html
 
-# Asegurarse que el archivo JSON de Firebase esté en la ruta correcta
-COPY storage/app/firebase/gestion-de-proyectos-271ca-firebase-adminsdk-fbsvc-08599b1cb5.json /var/www/html/storage/app/firebase/
-
-# Exponer puerto
+# Exponer el puerto 80
 EXPOSE 80
 
-# Comando para iniciar Apache
+# Arrancar Apache en primer plano
 CMD ["apache2-foreground"]
