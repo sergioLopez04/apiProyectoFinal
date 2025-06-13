@@ -8,6 +8,11 @@ use App\Http\Controllers\UsuarioController;
 Route::get('/', function () {
     return '¡Laravel funciona!';
 });
+
+Route::get('/debug-log', function () {
+    return nl2br(file_get_contents(storage_path('logs/laravel.log')));
+});
+
 /*
 // Usuarios (opcional)
 Route::get('/usuarios', [UsuarioController::class, 'index']);
