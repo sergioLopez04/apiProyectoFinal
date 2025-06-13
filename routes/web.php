@@ -10,8 +10,11 @@ Route::get('/', function () {
 });
 
 Route::get('/debug-log', function () {
-    return nl2br(file_get_contents(storage_path('logs/laravel.log')));
+    return file_exists(storage_path('logs/laravel.log'))
+        ? nl2br(file_get_contents(storage_path('logs/laravel.log')))
+        : 'No log file found';
 });
+
 
 /*
 // Usuarios (opcional)
