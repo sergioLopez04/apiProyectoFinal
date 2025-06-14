@@ -46,6 +46,17 @@ class UsuarioController extends Controller
         return $usuario;
     }
 
+    public function getByFirebaseUid($firebaseUid)
+    {
+        $usuario = Usuario::where('firebase_uid', $firebaseUid)->first();
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json($usuario);
+    }
+
     public function registrarFirebaseUser(Request $request)
     {
         $usuario = new Usuario();
