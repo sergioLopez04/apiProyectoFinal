@@ -32,4 +32,5 @@ Route::get('proyectos/{id}/tareas', [TareaController::class, 'tareasPorProyecto'
 Route::put('tareas/{id}/estado', [TareaController::class, 'actualizarEstado']);
 Route::post('/actividades', [ActividadController::class, 'store']);
 Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
+Route::get('/proyectos/{proyectoId}/miembros', [ProyectoController::class, 'miembros']);
 

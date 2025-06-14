@@ -14,7 +14,7 @@ class ProyectoController extends Controller
         return Proyecto::with(['tareas', 'actividades'])->get();
     }
 
-    
+
 
     public function porUsuario($id)
     {
@@ -30,20 +30,25 @@ class ProyectoController extends Controller
             'descripcion' => 'required|string',
             'id_creador' => 'required|integer',
             'members' => 'sometimes|array',
+            'members.*' => 'integer',  // IDs de usuarios
             'firestore_id' => 'sometimes|string',
             'fecha_creacion' => 'sometimes|numeric',
             'tiempo_acumulado' => 'sometimes|numeric',
         ]);
 
-        // Si se recibe fecha_creacion como timestamp en milisegundos, convertirlo a datetime (si es necesario)
         if ($request->has('fecha_creacion')) {
             $validated['fecha_creacion'] = Carbon::createFromTimestampMs($request->input('fecha_creacion'));
         }
 
         $proyecto = Proyecto::create($validated);
 
-        return response()->json($proyecto, 201);
+        if (isset($validated['members'])) {
+            $proyecto->miembros()->sync($validated['members']);
+        }
+
+        return response()->json($proyecto->load('miembros'), 201);
     }
+
 
     public function actualizarTiempoAcumulado(Request $request, $id)
     {
@@ -81,16 +86,26 @@ class ProyectoController extends Controller
     }
 
 
-    public function show($id)
+    /*public function show($id)
     {
         $proyecto = Proyecto::find($id);
         if (!$proyecto) {
             return response()->json(['error' => 'Proyecto no encontrado'], 404);
         }
         return response()->json($proyecto);
+    }*/
+
+    public function show($id)
+    {
+        $proyecto = Proyecto::with('miembros')->find($id);
+        if (!$proyecto) {
+            return response()->json(['error' => 'Proyecto no encontrado'], 404);
+        }
+        return response()->json($proyecto);
     }
 
-    public function unirse(Request $request, $proyectoId)
+
+    /*public function unirse(Request $request, $proyectoId)
     {
         $userId = $request->input('user_id');
         $usuario = Usuario::find($userId);
@@ -100,7 +115,36 @@ class ProyectoController extends Controller
         }
 
         return response()->json(['mensaje' => 'Usuario unido al proyecto correctamente']);
+    }*/
+
+    public function unirse(Request $request, $proyectoId)
+    {
+        $userId = $request->input('user_id');
+        $usuario = Usuario::find($userId);
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        if (!$usuario->proyectos()->where('proyecto_id', $proyectoId)->exists()) {
+            $usuario->proyectos()->attach($proyectoId);
+        }
+
+        return response()->json(['mensaje' => 'Usuario unido al proyecto correctamente']);
     }
+
+    public function miembros($proyectoId)
+    {
+        $proyecto = Proyecto::with('miembros')->find($proyectoId);
+
+        if (!$proyecto) {
+            return response()->json(['error' => 'Proyecto no encontrado'], 404);
+        }
+
+        return response()->json($proyecto->miembros);
+    }
+
+
 
 
 
