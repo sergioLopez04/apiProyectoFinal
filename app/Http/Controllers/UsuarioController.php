@@ -48,7 +48,7 @@ class UsuarioController extends Controller
 
     public function getByFirebaseUid($firebaseUid)
     {
-        $usuario = Usuario::where('firebaseUid', $firebaseUid)->first();
+        $usuario = Usuario::where('firebase_uid', $firebaseUid)->first();
 
         if (!$usuario) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
