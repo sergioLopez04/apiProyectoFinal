@@ -29,8 +29,6 @@ class ProyectoController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'id_creador' => 'required|integer',
-            'members' => 'sometimes|array',
-            'members.*' => 'integer',  // IDs de usuarios
             'firestore_id' => 'sometimes|string',
             'fecha_creacion' => 'sometimes|numeric',
             'tiempo_acumulado' => 'sometimes|numeric',
@@ -41,14 +39,6 @@ class ProyectoController extends Controller
         }
 
         $proyecto = Proyecto::create($validated);
-
-        // Siempre agregar al creador como miembro
-        $members = $validated['members'] ?? [];
-        if (!in_array($validated['id_creador'], $members)) {
-            $members[] = $validated['id_creador'];
-        }
-
-        $proyecto->miembros()->sync($members);
 
 
         return response()->json($proyecto->load('miembros'), 201);
