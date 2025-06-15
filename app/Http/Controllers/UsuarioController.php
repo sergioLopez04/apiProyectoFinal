@@ -35,6 +35,18 @@ class UsuarioController extends Controller
         }
     }
 
+    public function obtenerNombre($id)
+    {
+        $usuario = Usuario::find($id);
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json(['nombre' => $usuario->nombre]);
+    }
+
+
     public function getByUid($uid)
     {
         $usuario = Usuario::where('firebase_uid', $uid)->first();
