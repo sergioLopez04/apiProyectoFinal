@@ -109,6 +109,20 @@ class ProyectoController extends Controller
         return response()->json($proyecto);
     }
 
+    public function cogerNombre($id)
+    {
+        $usuario = Usuario::find($id);
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json([
+            'nombre' => $usuario->nombre
+        ]);
+    }
+
+
 
     /*public function unirse(Request $request, $proyectoId)
     {

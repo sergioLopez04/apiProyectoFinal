@@ -36,5 +36,5 @@ Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
 Route::get('/usuarios/firebase/{firebase_uid}', [UsuarioController::class, 'getByFirebaseUid']);
 Route::get('/proyectos/{proyectoId}/miembros', [ProyectoController::class, 'miembros']);
 Route::get('usuario_proyecto/usuario/{userId}/proyectoIds', [UsuarioProyectoController::class, 'getProyectoIdsPorUsuario']);
-Route::get('proyectos/{id}', [ProyectoController::class, 'show']);
+Route::get('proyectos/{id}', [ProyectoController::class, 'cogerNombre']);
 Route::get('/usuarios/{id}/nombre', [UsuarioController::class, 'obtenerNombre']);
