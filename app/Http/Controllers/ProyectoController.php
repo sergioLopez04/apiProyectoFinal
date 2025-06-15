@@ -42,9 +42,14 @@ class ProyectoController extends Controller
 
         $proyecto = Proyecto::create($validated);
 
-        if (isset($validated['members'])) {
-            $proyecto->miembros()->sync($validated['members']);
+        // Siempre agregar al creador como miembro
+        $members = $validated['members'] ?? [];
+        if (!in_array($validated['id_creador'], $members)) {
+            $members[] = $validated['id_creador'];
         }
+
+        $proyecto->miembros()->sync($members);
+
 
         return response()->json($proyecto->load('miembros'), 201);
     }

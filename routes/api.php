@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\UsuarioProyectoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,3 +36,6 @@ Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
 Route::get('/usuarios/firebase/{firebase_uid}', [UsuarioController::class, 'getByFirebaseUid']);
 Route::get('/proyectos/{proyectoId}/miembros', [ProyectoController::class, 'miembros']);
 
+Route::get('usuarios_proyectos/usuario/{userId}/proyectoIds', [UsuarioProyectoController::class, 'getProyectoIdsPorUsuario']);
+
+Route::get('proyectos/{id}', [ProyectoController::class, 'show']);
