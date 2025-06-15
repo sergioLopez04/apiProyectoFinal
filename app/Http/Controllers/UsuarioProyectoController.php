@@ -11,7 +11,7 @@ class UsuarioProyectoController extends Controller
     public function getProyectoIdsPorUsuario(int $userId)
     {
         // Consulta directa a la tabla pivot usuarios_proyectos
-        $ids = DB::table('usuarios_proyectos')
+        $ids = DB::table('usuario_proyecto')
             ->where('usuario_id', $userId)
             ->pluck('proyecto_id');
 
